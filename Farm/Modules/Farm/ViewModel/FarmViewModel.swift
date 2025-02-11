@@ -25,15 +25,32 @@ final class FarmViewModel: ObservableObject {
   }
   
   func generateGrassesOn(content: RealityViewCameraContent) {
-    let rangesForX  = [(-3...(-1)), (1...3)]
-    let rangesForZ =  [(-3...(-1)), (1...3)]
+    let rangesForX: [ClosedRange<Float>]  = [(-2.0...(-0.5)), (0.5...2.0)]
+    let rangesForZ: [ClosedRange<Float>] =  [(-2.0...(-0.5)), (0.5...2.0)]
     for _ in 0..<10 {
       let selectedRangeforX = rangesForX.randomElement()!
       let selectedRangeforZ = rangesForZ.randomElement()!
-      let x = Float(Int.random(in: selectedRangeforX))
+      let x = Float.random(in: selectedRangeforX)
       let y: Float = 0.0
-      let z = Float(Int.random(in: selectedRangeforZ))
+      let z = Float.random(in: selectedRangeforZ)
       guard let clone = grassModel?.clone(recursive: true) else { return }
+      
+      let bounds = grassModel?.visualBounds(relativeTo: nil)
+      let originalSize = bounds?.extents
+      let scaledSize = SIMD3(
+        (originalSize?.x ?? 0.0) * 1000,
+        (originalSize?.y ?? 0.0) * 1000,
+        (originalSize?.z ?? 0.0) * 1000
+      )
+      let shape = ShapeResource.generateBox(size: scaledSize)
+      clone.components.set(CollisionComponent(shapes: [shape]))
+      clone.components.set(PhysicsBodyComponent(
+        massProperties: .default,
+        material: .default,
+        mode: .static
+      ))
+      clone.generateCollisionShapes(recursive: true)
+      clone.name = "Grass"
       clone.position = [x,y,z]
       content.add(clone)
     }
@@ -47,8 +64,22 @@ final class FarmViewModel: ObservableObject {
       let rotationX = simd_quatf(angle: .pi/4, axis: [1, 0, 0])
       sickleModel?.transform.rotation = rotationX * rotationY
       sickleModel?.position = [0,-0.2,-0.3]
+      sickleModel?.name = "Sickle"
     } catch {
       print("Error Loading Sickle Usdz File: \(error)")
+    }
+  }
+  
+  func loadAxeModel() {
+    do {
+      let axe = try ModelEntity.loadModel(named: "axe")
+      axe.position = [0,-0.2,-0.3]
+      sickleModel?.removeFromParent()
+      sickleModel = nil
+      sickleModel = axe
+      
+    } catch {
+      print("Error Loadig Axe Usdz File: \(error)")
     }
   }
   
