@@ -14,11 +14,16 @@ struct FarmRealityView: View {
   
   @State private var cameraAnchor: AnchorEntity?
   @State private var content: RealityViewCameraContent?
-  @State private var subs: EventSubscription?
+  @State private var subs: [EventSubscription] = []
   @State private var animating = false
   @State private var coinsProgress: CGFloat = 0.0
-  @State private var coins: Int = 0
-  @State var isShopVisible: Bool = false
+  @State private var coins: Int = 10
+  @State private var isShopVisible: Bool = false
+  @State private var timer = Timer.publish(every: 3, on: .main, in: .common).autoconnect()
+  @State private var eggCount: Int = 0
+  @State private var milkCount: Int = 0
+  @State private var cowCount: Int = 0
+  @State private var chickenCount: Int = 0
   @State var purchaseName: String = ""
   
   var body: some View {
@@ -27,7 +32,7 @@ struct FarmRealityView: View {
       frontView
     }
     .onAppear {
-      viewModel.loadGrasModel()
+      viewModel.loadGrassModel()
       viewModel.loadSickleModel()
     }
     .onTapGesture {
@@ -37,24 +42,101 @@ struct FarmRealityView: View {
     .sheet(isPresented: $isShopVisible) {
       ShopView(coins: $coins, purcheseName: $purchaseName)
     }
-    //MARK: - Implement tool change
-    .onChange(of: purchaseName) { _, _ in
-      //      viewModel.loadAxeModel()
+    .onReceive(timer) { _ in
+      if !isShopVisible {
+        if viewModel.chickenModel != nil {
+          eggCount += chickenCount
+        }
+        if viewModel.cowModel != nil {
+          milkCount += cowCount
+        }
+      }
     }
-    
+    .onChange(of: purchaseName) { _,_ in
+      if purchaseName == "Axe" {
+        viewModel.loadAxeModel()
+        cameraAnchor?.addChild(viewModel.sickleModel ?? ModelEntity())
+      } else if  purchaseName == "Chicken" {
+        viewModel.getChicken()
+        chickenCount += 1
+        
+      } else if purchaseName == "Farm" {
+        viewModel.loadFarmModel()
+        content?.add(viewModel.farmModel ?? ModelEntity())
+      } else if purchaseName == "Cow" {
+        viewModel.getCow()
+        cowCount += 1
+      } else if purchaseName == "Market" {
+        viewModel.loadMarketModel()
+        content?.add(viewModel.marketModel ?? ModelEntity())
+      }
+      purchaseName = ""
+    }
+    .onChange(of: isShopVisible) { oldValue, newValue in
+      if newValue {
+        viewModel.farmModel?.children.forEach({ child in
+          child.stopAllAnimations()
+        })
+      } else {
+        viewModel.farmModel?.children.forEach({ child in
+          child.playAnimation(child.availableAnimations.first!.repeat(), transitionDuration: 0.6)
+        })
+      }
+    }
   }
+  
 }
 
 extension FarmRealityView {
   
   private var frontView: some View {
     VStack {
+      HStack {
+        Button(action: {
+          guard let egg = viewModel.eggModel else { return }
+          coins += 2
+          eggCount -= 1
+          sellProduct(modelEnitity: egg, magnitude: 0.1)
+        }) {
+          Text("Sell 🥚: \(eggCount) ")
+            .font(.headline)
+        }
+        .buttonStyle(.borderedProminent)
+        .disabled(eggCount == 0)
+        Button(action: {
+          guard let milk = viewModel.milkModel else { return }
+          coins += 4
+          milkCount -= 1
+          sellProduct(modelEnitity: milk)
+        }) {
+          Text("Sell 🍼: \(milkCount)")
+            .font(.headline)
+        }
+        .buttonStyle(.borderedProminent)
+        .disabled(milkCount == 0)
+        
+        Spacer()
+        Button(action: {
+          self.isShopVisible.toggle()
+        }) {
+          Image(systemName: "cart.fill")
+            .resizable()
+            .scaledToFit()
+            .foregroundStyle(Color.yellow)
+            .frame(maxWidth: 30, maxHeight: 30)
+        }
+      }
+      .padding()
       Spacer()
       HStack {
         Image(.dollar)
           .resizable()
           .scaledToFit()
-        ProgressBarView(progress: $coinsProgress, colors: [.green, .yellow])
+          .frame(maxWidth: 30, maxHeight: 30)
+        Text("Coins: \(coins)")
+          .foregroundStyle(Color.yellow)
+          .font(.title)
+          .bold()
       }
       .padding()
     }
@@ -73,27 +155,26 @@ extension FarmRealityView {
       camera.addChild(sickle)
       content.add(camera)
       content.camera = .spatialTracking
-    } update: { content in
-      DispatchQueue.main.async {
-        guard let content = self.content else { return }
-        subs =  content.subscribe(to: CollisionEvents.Ended.self, on: nil) { collision in
-          if collision.entityA.name == "Grass" {
-            collision.entityA.removeFromParent()
-            coinsProgress += 0.1
-            coins += 1
-          }
-          if collision.entityB.name == "Grass" {
-            collision.entityB.removeFromParent()
-            coinsProgress +=  0.1
-            coins +=  1
-          }
-          if coins == 10 {
-            withAnimation(.easeOut) {
-              isShopVisible = true
-            }
-          }
+      let subscription =  content.subscribe(to: CollisionEvents.Ended.self, on: nil) { collision in
+        print("Collision")
+        if collision.entityA.name == "Grass" {
+          collision.entityA.removeFromParent()
+          coins += 10
+        }
+        if collision.entityB.name == "Grass" {
+          collision.entityB.removeFromParent()
+          coins +=  10
+        }
+        
+        if self.content?.entities.count(where: {$0.name == "Grass"}) == 4 {
+          guard let realityContent = self.content else { return }
+          viewModel.generateGrassesOn(content: realityContent)
         }
       }
+      DispatchQueue.main.async {
+        subs.append(subscription)
+      }
+      
     }
     .ignoresSafeArea(.all)
   }
@@ -127,6 +208,41 @@ extension FarmRealityView {
     imitation.generateCollisionShapes(recursive: true)
     content?.add( imitation)
   }
+  
+  func getCameraForwardVector(camera: Entity) -> SIMD3<Float> {
+    let cameraOrientation = camera.orientation(relativeTo: nil)
+    let forward = cameraOrientation.act(SIMD3<Float>(0, 0, -1))
+    return normalize(forward)
+  }
+  
+  func sell(from position: SIMD3<Float>, model: ModelEntity) -> ModelEntity {
+    let clone = model.clone(recursive: true)
+    clone.position = position
+    return clone
+  }
+  
+  func applyForce(to entity: ModelEntity, direction: SIMD3<Float>, magnitude: Float) {
+    guard let _ = entity.physicsBody else {
+      print("Physics body not found.")
+      return
+    }
+    let force = direction * magnitude
+    entity.addForce(force, relativeTo: entity.parent)
+  }
+  
+  func sellProduct(modelEnitity: ModelEntity, magnitude: Float = 0.08) {
+    guard let content = content else { return }
+    let magnitude: Float = magnitude
+    let pos = getCameraForwardVector(camera: cameraAnchor!)
+    let model = sell(from: viewModel.sickleModel!.position(relativeTo: nil), model: modelEnitity)
+    
+    content.add(model)
+    applyForce(to: model, direction: pos, magnitude: magnitude)
+    DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+      model.removeFromParent()
+    }
+  }
+  
   
 }
 

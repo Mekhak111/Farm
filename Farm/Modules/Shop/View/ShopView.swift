@@ -11,55 +11,77 @@ import SceneKit
 
 struct ShopView: View {
   
+  @Environment(\.dismiss) var dismiss
   @Binding var coins: Int
   @Binding var purcheseName: String
   let tools: [ShopItem] = [
-    ShopItem(name: "Axe", price: 10, imageName: "axe.scn"),
-    ShopItem(name: "Chainsaw", price: 50, imageName: "chainsaw.scn")
+    ShopItem(name: "Axe", price: 1000000, imageName: "axe.scn", description: "Coming Soon:)"),
   ]
   
   let animals: [ShopItem] = [
-    ShopItem(name: "Chicken", price: 100, imageName: "chicken.scn")
+    ShopItem(name: "Chicken", price: 50, imageName: "chicken.scn", description: "Buy Chicken to get eggs and sell. Max 5 chickens."),
+    ShopItem(name: "Cow", price: 100, imageName: "cow.scn", description: "Buy Cow to get milk. Max 5 cows"),
+  ]
+  
+  let areas: [ShopItem] = [
+    ShopItem(name: "Farm", price: 150, imageName: "farm.scn", description: "Buy Farm to get animals. Max 1 Farm."),
+    ShopItem(name: "Market", price: 200, imageName: "market.scn", description: "Buy Market to sell your goods. Max 1 Market.")
+    
   ]
   
   var body: some View {
     VStack {
       HStack {
         Image(systemName: "creditcard.fill")
-          .foregroundColor(.yellow)
+          .foregroundStyle(.yellow)
         Text("Coins: \(coins)")
           .font(.title)
           .bold()
       }
       .padding()
       .background(RoundedRectangle(cornerRadius: 15).fill(Color.black.opacity(0.1)))
-      .padding(.horizontal)
+      .padding()
+      
       
       ScrollView {
         VStack(alignment: .leading, spacing: 20) {
           SectionView(title: "🛠️ Tools") {
             ForEach(tools) { item in
               ShopItemView(item: item, coins: coins) {
-                if coins >= item.price {
-                  withAnimation {
+                DispatchQueue.global(qos: .userInitiated).asyncAfter(deadline: .now() + 0.5) {
+                  
+                  if coins >= item.price {
                     coins -= item.price
                     purcheseName = item.name
+                    dismiss()
                   }
                 }
-                
               }
             }
           }
           SectionView(title: "🐔 Animals") {
             ForEach(animals) { item in
               ShopItemView(item: item, coins: coins) {
-                if coins >= item.price {
-                  withAnimation {
-                    coins -= item.price
-                    purcheseName = item.name
+                DispatchQueue.global(qos: .background).async  {
+                  if coins >= item.price {
+                      coins -= item.price
+                      purcheseName = item.name
+                    dismiss()
                   }
                 }
-                
+              }
+            }
+          }
+          SectionView(title: "🏕️ Areas") {
+            ForEach(areas) { item in
+              ShopItemView(item: item, coins: coins) {
+                DispatchQueue.global(qos: .background).async {
+                  if coins >= item.price {
+                    coins -= item.price
+                    purcheseName = item.name
+                    dismiss()
+                  }
+                }
               }
             }
           }
@@ -89,59 +111,21 @@ struct SectionView<Content: View>: View {
   
 }
 
-
-struct ShopItemView: View {
+extension View {
   
-  let item: ShopItem
-  let coins: Int
-  let onBuy: () -> Void
-  
-  var body: some View {
-    VStack {
-      Image(uiImage: thumbnail(for: item.imageName, size: CGSize(width: 150, height: 150), time: 0.0) ?? UIImage())
-        .resizable()
-        .scaledToFit()
-        .frame(height: 100)
-        .padding()
-      
-      Text(item.name)
-        .font(.title2)
-        .bold()
-      
-      Text("\(item.price) Coins")
-        .font(.headline)
-        .foregroundColor(.gray)
-      
-      Button(action: onBuy) {
-        Text(coins >= item.price ? "Buy" : "Not Enough Coins")
-          .font(.headline)
-          .padding()
-          .frame(maxWidth: .infinity)
-          .background(coins >= item.price ? Color.blue : Color.gray)
-          .foregroundColor(.white)
-          .cornerRadius(12)
-          .shadow(radius: 5)
-      }
-      .disabled(coins < item.price)
-    }
-    .padding()
-    .background(Color.white)
-    .cornerRadius(15)
-    .shadow(radius: 5)
-    .opacity(coins >= item.price ? 1.0 : 0.5)
+  func thumbnail(for modelName: String, size: CGSize, time: TimeInterval = 0) -> UIImage? {
+    let device = MTLCreateSystemDefaultDevice()
+    let renderer = SCNRenderer(device: device, options: [:])
+    renderer.autoenablesDefaultLighting = true
+    guard let scene = SCNScene(named: modelName) else { return nil }
+    renderer.scene = scene
+    let image = renderer.snapshot(atTime: time, with: size, antialiasingMode: .multisampling4X)
+    return image
   }
   
 }
 
-func thumbnail(for modelName: String, size: CGSize, time: TimeInterval = 0) -> UIImage? {
-  let device = MTLCreateSystemDefaultDevice()
-  let renderer = SCNRenderer(device: device, options: [:])
-  renderer.autoenablesDefaultLighting = true
-  guard let scene = SCNScene(named: modelName) else { return nil }
-  renderer.scene = scene
-  let image = renderer.snapshot(atTime: time, with: size, antialiasingMode: .multisampling4X)
-  return image
-}
+
 
 #Preview {
   ShopView(coins: .constant(15), purcheseName: .constant(""))
