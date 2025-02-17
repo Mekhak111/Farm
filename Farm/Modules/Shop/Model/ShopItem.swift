@@ -13,5 +13,6 @@ struct ShopItem: Identifiable {
   let name: String
   let price: Int
   let imageName: String
+  let description: String
   
 }
