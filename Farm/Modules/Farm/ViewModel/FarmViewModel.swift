@@ -78,7 +78,7 @@ final class FarmViewModel: ObservableObject {
       print("Error Loading Farm Usdz File: \(error)")
     }
   }
-
+  
   func loadMarketModel() {
     do {
       marketModel = try ModelEntity.loadModel(named: "market")
@@ -88,17 +88,18 @@ final class FarmViewModel: ObservableObject {
       print("Error Loading Farm Usdz File: \(error)")
     }
   }
-   
+  
   func loadChicken() {
     do {
       chickenModel = try ModelEntity.loadModel(named: "chicken")
       chickenModel?.scale = [1.2,1.2,1.2]
       let rotationY = simd_quatf(angle: .pi, axis: [0, 1, 0])
       chickenModel?.transform.rotation = rotationY
-      farmModel!.addChild(chickenModel!)
-      chickenModel?.position = getChickenPosition()
-      if let animation = chickenModel?.availableAnimations.first {
-        chickenModel?.playAnimation(animation.repeat(), transitionDuration: 0.6)
+      guard let farmModel, let chickenModel else { return }
+      farmModel.addChild(chickenModel)
+      chickenModel.position = getChickenPosition()
+      if let animation = chickenModel.availableAnimations.first {
+        chickenModel.playAnimation(animation.repeat(), transitionDuration: 0.6)
       }
       loadEggModel()
     } catch {
@@ -112,10 +113,11 @@ final class FarmViewModel: ObservableObject {
       cowModel?.scale = [1,1,1]
       let rotationY = simd_quatf(angle: .pi, axis: [0, 1, 0])
       cowModel?.transform.rotation = rotationY
-      farmModel!.addChild(cowModel!)
-      cowModel?.position = getCowPosition()
-      if let animation = cowModel?.availableAnimations.first {
-        cowModel?.playAnimation(animation.repeat(), transitionDuration: 0.6)
+      guard let farmModel, let cowModel else { return }
+      farmModel.addChild(cowModel)
+      cowModel.position = getCowPosition()
+      if let animation = cowModel.availableAnimations.first {
+        cowModel.playAnimation(animation.repeat(), transitionDuration: 0.6)
       }
       loadMilkModel()
     } catch {
@@ -183,8 +185,8 @@ final class FarmViewModel: ObservableObject {
     let rangesForX: [ClosedRange<Float>]  = [(-2.0...(-0.5)), (0.5...2.0)]
     let rangesForZ: [ClosedRange<Float>] =  [(-2.0...(-0.5)), (0.5...2.0)]
     for _ in 0..<10 {
-      let selectedRangeforX = rangesForX.randomElement()!
-      let selectedRangeforZ = rangesForZ.randomElement()!
+      guard  let selectedRangeforX = rangesForX.randomElement(),
+             let selectedRangeforZ = rangesForZ.randomElement() else { return }
       let x = Float.random(in: selectedRangeforX)
       let y: Float = 0.0
       let z = Float.random(in: selectedRangeforZ)
@@ -254,8 +256,8 @@ final class FarmViewModel: ObservableObject {
     let rangesForX: [ClosedRange<Float>]  = [(-3.0...(-0.5)), (0.5...3.0)]
     let rangesForZ: [ClosedRange<Float>] =  [(-3.0...(-0.5)), (0.5...3.0)]
     for _ in 0..<10 {
-      let selectedRangeforX = rangesForX.randomElement()!
-      let selectedRangeforZ = rangesForZ.randomElement()!
+      guard let selectedRangeforX = rangesForX.randomElement(),
+            let selectedRangeforZ = rangesForZ.randomElement() else { return }
       let x = Float.random(in: selectedRangeforX)
       let y: Float = 0.0
       let z = Float.random(in: selectedRangeforZ)

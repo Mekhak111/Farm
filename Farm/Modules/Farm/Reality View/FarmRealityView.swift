@@ -79,10 +79,42 @@ struct FarmRealityView: View {
         })
       } else {
         viewModel.farmModel?.children.forEach({ child in
-          child.playAnimation(child.availableAnimations.first!.repeat(), transitionDuration: 0.6)
+          if let firstAnimation = child.availableAnimations.first {
+            child.playAnimation(firstAnimation.repeat(), transitionDuration: 0.6)
+          }
         })
       }
     }
+    .gesture(
+      DragGesture()
+        .onChanged { value in
+          guard let entity = viewModel.farmModel else { return }
+          let translation = value.translation
+          let newPosition = SIMD3<Float>(
+            Float(translation.width) * 0.001,
+            0,
+            Float(translation.height) * -0.001
+          )
+          entity.position += newPosition
+        }
+    )
+    .gesture(
+      RotationGesture()
+        .onChanged { value in
+          guard let entity = viewModel.farmModel else { return }
+          entity.transform.rotation = simd_quatf(
+            angle: Float(value.radians),
+            axis: [0, 1, 0]
+          )
+        }
+    )
+    .gesture(
+      MagnificationGesture()
+        .onChanged { value in
+          guard let entity = viewModel.farmModel else { return }
+          entity.scale = SIMD3<Float>(repeating: Float(value))
+        }
+    )
   }
   
 }
@@ -123,7 +155,7 @@ extension FarmRealityView {
             .resizable()
             .scaledToFit()
             .foregroundStyle(Color.yellow)
-            .frame(maxWidth: 30, maxHeight: 30)
+            .frame(maxWidth: 50, maxHeight: 50)
         }
       }
       .padding()
@@ -159,11 +191,11 @@ extension FarmRealityView {
         print("Collision")
         if collision.entityA.name == "Grass" {
           collision.entityA.removeFromParent()
-          coins += 10
+          coins += 15
         }
         if collision.entityB.name == "Grass" {
           collision.entityB.removeFromParent()
-          coins +=  10
+          coins +=  15
         }
         
         if self.content?.entities.count(where: {$0.name == "Grass"}) == 4 {
@@ -203,7 +235,8 @@ extension FarmRealityView {
       material: .default,
       mode: .dynamic
     ))
-    imitation.position = viewModel.sickleModel!.position(relativeTo: nil)
+    guard let sickle = viewModel.sickleModel else { return }
+    imitation.position = sickle.position(relativeTo: nil)
     imitation.physicsBody?.isAffectedByGravity = true
     imitation.generateCollisionShapes(recursive: true)
     content?.add( imitation)
@@ -233,8 +266,9 @@ extension FarmRealityView {
   func sellProduct(modelEnitity: ModelEntity, magnitude: Float = 0.08) {
     guard let content = content else { return }
     let magnitude: Float = magnitude
-    let pos = getCameraForwardVector(camera: cameraAnchor!)
-    let model = sell(from: viewModel.sickleModel!.position(relativeTo: nil), model: modelEnitity)
+    guard let cameraAnchor, let sickle = viewModel.sickleModel else { return }
+    let pos = getCameraForwardVector(camera: cameraAnchor)
+    let model = sell(from: sickle.position(relativeTo: nil), model: modelEnitity)
     
     content.add(model)
     applyForce(to: model, direction: pos, magnitude: magnitude)
