@@ -16,10 +16,12 @@ final class FarmViewModel: ObservableObject {
   @Published var treeModel: ModelEntity?
   @Published var chickenModel: ModelEntity?
   @Published var farmModel: ModelEntity?
+  @Published var factoryModel: ModelEntity?
   @Published var marketModel: ModelEntity?
   @Published var cowModel: ModelEntity?
   @Published var eggModel: ModelEntity?
   @Published var milkModel: ModelEntity?
+  @Published var cheaseModel: ModelEntity?
   
   private var chickenPosition: [SIMD3<Float>] = [
     [-600,100,-600],
@@ -79,6 +81,24 @@ final class FarmViewModel: ObservableObject {
     }
   }
   
+  func loadFactoryModel() {
+    do {
+      factoryModel = try ModelEntity.loadModel(named: "factory")
+      factoryModel?.scale = [0.005,0.005,0.005]
+      factoryModel?.position = [8,0,-2]
+      factoryModel?.components.set(PhysicsBodyComponent(
+        massProperties: .default,
+        material: .default,
+        mode: .static
+      ))
+      factoryModel?.generateCollisionShapes(recursive: true)
+      factoryModel?.name = "Factory"
+      loadChease()
+    } catch {
+      print("Error Loading Farm Usdz File: \(error)")
+    }
+  }
+  
   func loadMarketModel() {
     do {
       marketModel = try ModelEntity.loadModel(named: "market")
@@ -125,6 +145,10 @@ final class FarmViewModel: ObservableObject {
     }
   }
   
+  func generateChease() {
+    
+  }
+  
   func loadEggModel() {
     do {
       eggModel = try ModelEntity.loadModel(named: "egg")
@@ -135,6 +159,7 @@ final class FarmViewModel: ObservableObject {
       ))
       eggModel?.generateCollisionShapes(recursive: true)
       eggModel?.physicsBody?.isAffectedByGravity = true
+      eggModel?.name = "Egg"
     } catch {
       print("Error Loading Egg Usdz File: \(error)")
     }
@@ -150,8 +175,26 @@ final class FarmViewModel: ObservableObject {
       ))
       milkModel?.generateCollisionShapes(recursive: true)
       milkModel?.physicsBody?.isAffectedByGravity = true
+      milkModel?.name = "Milk"
     } catch {
       print("Error Loading Milk Usdz File: \(error)")
+    }
+  }
+  
+  func loadChease() {
+    do {
+      cheaseModel = try ModelEntity.loadModel(named: "chease")
+      cheaseModel?.scale = [0.002,0.002,0.002]
+      cheaseModel?.components.set(PhysicsBodyComponent(
+        massProperties: .default,
+        material: .default,
+        mode: .dynamic
+      ))
+      cheaseModel?.generateCollisionShapes(recursive: true)
+      cheaseModel?.physicsBody?.isAffectedByGravity = true
+      cheaseModel?.name = "chease"
+    } catch {
+      print("Error Loading chease Usdz File: \(error)")
     }
   }
   
@@ -237,7 +280,6 @@ final class FarmViewModel: ObservableObject {
       sickleModel?.removeFromParent()
       sickleModel = nil
       sickleModel = axe
-      
     } catch {
       print("Error Loadig Axe Usdz File: \(error)")
     }

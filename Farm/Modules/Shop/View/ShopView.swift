@@ -25,8 +25,8 @@ struct ShopView: View {
   
   let areas: [ShopItem] = [
     ShopItem(name: "Farm", price: 150, imageName: "farm.scn", description: "Buy Farm to get animals. Max 1 Farm."),
-    ShopItem(name: "Market", price: 200, imageName: "market.scn", description: "Buy Market to sell your goods. Max 1 Market.")
-    
+    ShopItem(name: "Market", price: 200, imageName: "market.scn", description: "Buy Market to sell your goods. Max 1 Market."),
+    ShopItem(name: "Chease Factory", price: 300, imageName: "factory.scn", description: "Buy Chease Factory to make chease and sell. Max 1 Factory.")
   ]
   
   var body: some View {
