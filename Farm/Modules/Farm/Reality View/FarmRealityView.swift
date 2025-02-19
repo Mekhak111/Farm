@@ -16,16 +16,16 @@ struct FarmRealityView: View {
   @State private var content: RealityViewCameraContent?
   @State private var subs: [EventSubscription] = []
   @State private var animating = false
-  @State private var coinsProgress: CGFloat = 0.0
   @State private var coins: Int = 10
   @State private var isShopVisible: Bool = false
   @State private var timer = Timer.publish(every: 3, on: .main, in: .common).autoconnect()
   @State private var eggCount: Int = 0
   @State private var milkCount: Int = 0
+  @State private var cheaseCount: Int = 0
   @State private var cowCount: Int = 0
   @State private var chickenCount: Int = 0
   @State var purchaseName: String = ""
-  
+
   var body: some View {
     ZStack {
       realityContent
@@ -69,6 +69,9 @@ struct FarmRealityView: View {
       } else if purchaseName == "Market" {
         viewModel.loadMarketModel()
         content?.add(viewModel.marketModel ?? ModelEntity())
+      } else if purchaseName == "Chease Factory" {
+        viewModel.loadFactoryModel()
+        content?.add(viewModel.factoryModel ?? ModelEntity())
       }
       purchaseName = ""
     }
@@ -130,7 +133,7 @@ extension FarmRealityView {
           eggCount -= 1
           sellProduct(modelEnitity: egg, magnitude: 0.1)
         }) {
-          Text("Sell 🥚: \(eggCount) ")
+          Text("Sell 🥚 : \(eggCount) ")
             .font(.headline)
         }
         .buttonStyle(.borderedProminent)
@@ -146,7 +149,17 @@ extension FarmRealityView {
         }
         .buttonStyle(.borderedProminent)
         .disabled(milkCount == 0)
-        
+        Button(action: {
+          guard let cheaseModel = viewModel.cheaseModel else { return }
+          coins += 10
+          cheaseCount -= 1
+          sellProduct(modelEnitity: cheaseModel,magnitude: 0.05)
+        }) {
+          Text("Sell 🧀: \(milkCount)")
+            .font(.headline)
+        }
+        .buttonStyle(.borderedProminent)
+        .disabled(cheaseCount == 0)
         Spacer()
         Button(action: {
           self.isShopVisible.toggle()
@@ -188,7 +201,7 @@ extension FarmRealityView {
       content.add(camera)
       content.camera = .spatialTracking
       let subscription =  content.subscribe(to: CollisionEvents.Ended.self, on: nil) { collision in
-        print("Collision")
+        print("Collision A:\(collision.entityA) B:\(collision.entityB)")
         if collision.entityA.name == "Grass" {
           collision.entityA.removeFromParent()
           coins += 15
@@ -196,6 +209,17 @@ extension FarmRealityView {
         if collision.entityB.name == "Grass" {
           collision.entityB.removeFromParent()
           coins +=  15
+        }
+        
+        if (collision.entityA.name == "Factory" && collision.entityB.name == "Milk")
+        {
+          print("Generate Chease")
+          let pos = collision.entityB.position(relativeTo: nil)
+          collision.entityB.removeFromParent()
+          if let anim = viewModel.factoryModel?.availableAnimations.first {
+            viewModel.factoryModel?.playAnimation(anim.repeat(count: 3), transitionDuration: 1.0)
+          }
+          getChease(position: pos)
         }
         
         if self.content?.entities.count(where: {$0.name == "Grass"}) == 4 {
@@ -248,7 +272,13 @@ extension FarmRealityView {
     return normalize(forward)
   }
   
-  func sell(from position: SIMD3<Float>, model: ModelEntity) -> ModelEntity {
+  func getCameraBackwardVector(camera: Entity) -> SIMD3<Float> {
+    let cameraOrientation = camera.orientation(relativeTo: nil)
+    let forward = cameraOrientation.act(SIMD3<Float>(0, 0, 1))
+    return normalize(forward)
+  }
+  
+  func makeModel(from position: SIMD3<Float>, model: ModelEntity) -> ModelEntity {
     let clone = model.clone(recursive: true)
     clone.position = position
     return clone
@@ -268,13 +298,23 @@ extension FarmRealityView {
     let magnitude: Float = magnitude
     guard let cameraAnchor, let sickle = viewModel.sickleModel else { return }
     let pos = getCameraForwardVector(camera: cameraAnchor)
-    let model = sell(from: sickle.position(relativeTo: nil), model: modelEnitity)
+    let model = makeModel(from: sickle.position(relativeTo: nil), model: modelEnitity)
     
     content.add(model)
     applyForce(to: model, direction: pos, magnitude: magnitude)
     DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
       model.removeFromParent()
     }
+  }
+  
+  func getChease(position: SIMD3<Float>) {
+    guard let content else { return }
+    guard let cameraAnchor else { return }
+    let pos = getCameraBackwardVector(camera: cameraAnchor)
+    let chease = makeModel(from: position, model: viewModel.cheaseModel!)
+    content.add(chease)
+    applyForce(to: chease, direction: pos, magnitude: 0.05)
+    cheaseCount += 1
   }
   
   
