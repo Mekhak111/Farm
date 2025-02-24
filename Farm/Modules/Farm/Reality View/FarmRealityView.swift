@@ -155,7 +155,7 @@ extension FarmRealityView {
           cheaseCount -= 1
           sellProduct(modelEnitity: cheaseModel,magnitude: 0.05)
         }) {
-          Text("Sell 🧀: \(milkCount)")
+          Text("Sell 🧀: \(cheaseCount)")
             .font(.headline)
         }
         .buttonStyle(.borderedProminent)

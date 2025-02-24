@@ -64,6 +64,7 @@ final class FarmViewModel: ObservableObject {
       grassModel = try ModelEntity.loadModel(named: "bush")
       grassModel?.scale = [0.001,0.001,0.001]
       grassModel?.position = [0,0,-0.5]
+      addOcclusionMaterial(model: grassModel)
     } catch {
       print("Error Loading  Grass Usdz File: \(error)")
     }
@@ -73,6 +74,7 @@ final class FarmViewModel: ObservableObject {
     do {
       farmModel = try ModelEntity.loadModel(named: "farm")
       farmModel?.scale = [0.001,0.001,0.001]
+      addOcclusionMaterial(model: farmModel)
       farmModel?.position = [0,-1,-3]
       let rotationY = simd_quatf(angle: .pi, axis: [0, 1, 0])
       farmModel?.transform.rotation = rotationY
@@ -85,6 +87,7 @@ final class FarmViewModel: ObservableObject {
     do {
       factoryModel = try ModelEntity.loadModel(named: "factory")
       factoryModel?.scale = [0.005,0.005,0.005]
+      addOcclusionMaterial(model: factoryModel)
       factoryModel?.position = [8,0,-2]
       factoryModel?.components.set(PhysicsBodyComponent(
         massProperties: .default,
@@ -113,6 +116,7 @@ final class FarmViewModel: ObservableObject {
     do {
       chickenModel = try ModelEntity.loadModel(named: "chicken")
       chickenModel?.scale = [1.2,1.2,1.2]
+      addOcclusionMaterial(model: chickenModel)
       let rotationY = simd_quatf(angle: .pi, axis: [0, 1, 0])
       chickenModel?.transform.rotation = rotationY
       guard let farmModel, let chickenModel else { return }
@@ -131,6 +135,7 @@ final class FarmViewModel: ObservableObject {
     do {
       cowModel = try ModelEntity.loadModel(named: "cow")
       cowModel?.scale = [1,1,1]
+      addOcclusionMaterial(model: cowModel)
       let rotationY = simd_quatf(angle: .pi, axis: [0, 1, 0])
       cowModel?.transform.rotation = rotationY
       guard let farmModel, let cowModel else { return }
@@ -143,10 +148,6 @@ final class FarmViewModel: ObservableObject {
     } catch {
       print("Error Loading Cow Usdz File: \(error)")
     }
-  }
-  
-  func generateChease() {
-    
   }
   
   func loadEggModel() {
@@ -234,6 +235,7 @@ final class FarmViewModel: ObservableObject {
       let y: Float = 0.0
       let z = Float.random(in: selectedRangeforZ)
       guard let clone = grassModel?.clone(recursive: true) else { return }
+
       
       let bounds = grassModel?.visualBounds(relativeTo: nil)
       let originalSize = bounds?.extents
@@ -242,6 +244,9 @@ final class FarmViewModel: ObservableObject {
         (originalSize?.y ?? 0.0) * 1000,
         (originalSize?.z ?? 0.0) * 1000
       )
+      
+      addOcclusionMaterial(model: clone)
+      
       let shape = ShapeResource.generateBox(size: scaledSize)
       clone.components.set(CollisionComponent(shapes: [shape]))
       clone.components.set(PhysicsBodyComponent(
@@ -324,6 +329,12 @@ final class FarmViewModel: ObservableObject {
       clone.position = [x,y,z]
       content.add(clone)
     }
+  }
+  
+  private func addOcclusionMaterial(model: ModelEntity?) {
+    var occlusionMaterial = OcclusionMaterial()
+    occlusionMaterial.readsDepth = false
+    model?.model?.materials.append(occlusionMaterial)
   }
   
 }
