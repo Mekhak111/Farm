@@ -6,11 +6,52 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		24367EE42D6DAE9E00BA2527 /* RealityKitContent in Frameworks */ = {isa = PBXBuildFile; productRef = 24367EE32D6DAE9E00BA2527 /* RealityKitContent */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
+		24367EDF2D6DAE9E00BA2527 /* FarmVision.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FarmVision.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		24367EE22D6DAE9E00BA2527 /* RealityKitContent */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = RealityKitContent; sourceTree = "<group>"; };
 		2489CAB92D5A054E00860D8A /* Farm.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Farm.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		24367EF72D6DAEA000BA2527 /* Exceptions for "FarmVision" folder in "FarmVision" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 24367EDE2D6DAE9E00BA2527 /* FarmVision */;
+		};
+		24367F012D6DB25800BA2527 /* Exceptions for "Shared" folder in "FarmVision" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				"Shared 3D Models/Models/axe.usdz",
+				"Shared Models/ShopItem.swift",
+				"Shared ViewModel/FarmViewModel.swift",
+			);
+			target = 24367EDE2D6DAE9E00BA2527 /* FarmVision */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		24367EE02D6DAE9E00BA2527 /* FarmVision */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				24367EF72D6DAEA000BA2527 /* Exceptions for "FarmVision" folder in "FarmVision" target */,
+			);
+			path = FarmVision;
+			sourceTree = "<group>";
+		};
+		24367EF92D6DB1BD00BA2527 /* Shared */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				24367F012D6DB25800BA2527 /* Exceptions for "Shared" folder in "FarmVision" target */,
+			);
+			path = Shared;
+			sourceTree = "<group>";
+		};
 		2489CABB2D5A054E00860D8A /* Farm */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = Farm;
@@ -19,6 +60,14 @@
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		24367EDC2D6DAE9E00BA2527 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				24367EE42D6DAE9E00BA2527 /* RealityKitContent in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		2489CAB62D5A054E00860D8A /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -29,10 +78,21 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		24367EE12D6DAE9E00BA2527 /* Packages */ = {
+			isa = PBXGroup;
+			children = (
+				24367EE22D6DAE9E00BA2527 /* RealityKitContent */,
+			);
+			path = Packages;
+			sourceTree = "<group>";
+		};
 		2489CAB02D5A054E00860D8A = {
 			isa = PBXGroup;
 			children = (
+				24367EF92D6DB1BD00BA2527 /* Shared */,
 				2489CABB2D5A054E00860D8A /* Farm */,
+				24367EE02D6DAE9E00BA2527 /* FarmVision */,
+				24367EE12D6DAE9E00BA2527 /* Packages */,
 				2489CABA2D5A054E00860D8A /* Products */,
 			);
 			sourceTree = "<group>";
@@ -41,6 +101,7 @@
 			isa = PBXGroup;
 			children = (
 				2489CAB92D5A054E00860D8A /* Farm.app */,
+				24367EDF2D6DAE9E00BA2527 /* FarmVision.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -48,6 +109,29 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		24367EDE2D6DAE9E00BA2527 /* FarmVision */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 24367EF82D6DAEA000BA2527 /* Build configuration list for PBXNativeTarget "FarmVision" */;
+			buildPhases = (
+				24367EDB2D6DAE9E00BA2527 /* Sources */,
+				24367EDC2D6DAE9E00BA2527 /* Frameworks */,
+				24367EDD2D6DAE9E00BA2527 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				24367EE02D6DAE9E00BA2527 /* FarmVision */,
+			);
+			name = FarmVision;
+			packageProductDependencies = (
+				24367EE32D6DAE9E00BA2527 /* RealityKitContent */,
+			);
+			productName = FarmVision;
+			productReference = 24367EDF2D6DAE9E00BA2527 /* FarmVision.app */;
+			productType = "com.apple.product-type.application";
+		};
 		2489CAB82D5A054E00860D8A /* Farm */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 2489CAC72D5A054F00860D8A /* Build configuration list for PBXNativeTarget "Farm" */;
@@ -61,6 +145,7 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
+				24367EF92D6DB1BD00BA2527 /* Shared */,
 				2489CABB2D5A054E00860D8A /* Farm */,
 			);
 			name = Farm;
@@ -80,6 +165,9 @@
 				LastSwiftUpdateCheck = 1600;
 				LastUpgradeCheck = 1600;
 				TargetAttributes = {
+					24367EDE2D6DAE9E00BA2527 = {
+						CreatedOnToolsVersion = 16.0;
+					};
 					2489CAB82D5A054E00860D8A = {
 						CreatedOnToolsVersion = 16.0;
 					};
@@ -100,11 +188,19 @@
 			projectRoot = "";
 			targets = (
 				2489CAB82D5A054E00860D8A /* Farm */,
+				24367EDE2D6DAE9E00BA2527 /* FarmVision */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		24367EDD2D6DAE9E00BA2527 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		2489CAB72D5A054E00860D8A /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -115,6 +211,13 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		24367EDB2D6DAE9E00BA2527 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		2489CAB52D5A054E00860D8A /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -125,6 +228,62 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
+		24367EF52D6DAEA000BA2527 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"FarmVision/Preview Content\"";
+				DEVELOPMENT_TEAM = W6NNYLPY8M;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "$(TARGET_NAME)/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.Mekhak.farm.vision.FarmVision;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = xros;
+				SUPPORTED_PLATFORMS = "xros xrsimulator";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 7;
+				XROS_DEPLOYMENT_TARGET = 2.0;
+			};
+			name = Debug;
+		};
+		24367EF62D6DAEA000BA2527 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"FarmVision/Preview Content\"";
+				DEVELOPMENT_TEAM = W6NNYLPY8M;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "$(TARGET_NAME)/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.Mekhak.farm.vision.FarmVision;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = xros;
+				SUPPORTED_PLATFORMS = "xros xrsimulator";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 7;
+				XROS_DEPLOYMENT_TARGET = 2.0;
+			};
+			name = Release;
+		};
 		2489CAC52D5A054F00860D8A /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -309,6 +468,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		24367EF82D6DAEA000BA2527 /* Build configuration list for PBXNativeTarget "FarmVision" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				24367EF52D6DAEA000BA2527 /* Debug */,
+				24367EF62D6DAEA000BA2527 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		2489CAB42D5A054E00860D8A /* Build configuration list for PBXProject "Farm" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -328,6 +496,13 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		24367EE32D6DAE9E00BA2527 /* RealityKitContent */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = RealityKitContent;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 2489CAB12D5A054E00860D8A /* Project object */;
 }

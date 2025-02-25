@@ -8,6 +8,9 @@
 import Foundation
 import RealityKit
 import _RealityKit_SwiftUI
+#if os(visionOS)
+import RealityKitContent
+#endif
 
 final class FarmViewModel: ObservableObject {
   
@@ -225,7 +228,7 @@ final class FarmViewModel: ObservableObject {
     }
   }
   
-  func generateGrassesOn(content: RealityViewCameraContent) {
+  func generateGrassesOn(content: any RealityViewContentProtocol) {
     let rangesForX: [ClosedRange<Float>]  = [(-2.0...(-0.5)), (0.5...2.0)]
     let rangesForZ: [ClosedRange<Float>] =  [(-2.0...(-0.5)), (0.5...2.0)]
     for _ in 0..<10 {
@@ -260,7 +263,7 @@ final class FarmViewModel: ObservableObject {
       content.add(clone)
     }
   }
-  
+    
   func loadSickleModel() {
     do {
       sickleModel = try ModelEntity.loadModel(named: "Sickle")
@@ -299,7 +302,7 @@ final class FarmViewModel: ObservableObject {
     }
   }
   
-  func generateTreesOn(content: RealityViewCameraContent) {
+  func generateTreesOn(content: any RealityViewContentProtocol) {
     let rangesForX: [ClosedRange<Float>]  = [(-3.0...(-0.5)), (0.5...3.0)]
     let rangesForZ: [ClosedRange<Float>] =  [(-3.0...(-0.5)), (0.5...3.0)]
     for _ in 0..<10 {
