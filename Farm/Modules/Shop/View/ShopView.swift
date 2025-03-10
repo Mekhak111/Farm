@@ -53,7 +53,9 @@ struct ShopView: View {
                   if coins >= item.price {
                     coins -= item.price
                     purcheseName = item.name
+#if os(iOS)
                     dismiss()
+#endif
                   }
                 }
               }
@@ -64,9 +66,11 @@ struct ShopView: View {
               ShopItemView(item: item, coins: coins) {
                 DispatchQueue.global(qos: .background).async  {
                   if coins >= item.price {
-                      coins -= item.price
-                      purcheseName = item.name
+                    coins -= item.price
+                    purcheseName = item.name
+#if os(iOS)
                     dismiss()
+#endif
                   }
                 }
               }
@@ -79,7 +83,9 @@ struct ShopView: View {
                   if coins >= item.price {
                     coins -= item.price
                     purcheseName = item.name
+#if os(iOS)
                     dismiss()
+#endif
                   }
                 }
               }
