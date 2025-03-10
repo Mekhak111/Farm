@@ -28,8 +28,37 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				"Shared 3D Models/Models/axe.usdz",
+				"Shared 3D Models/Models/bush.usdz",
+				"Shared 3D Models/Models/chainsaw.usdz",
+				"Shared 3D Models/Models/chease.usdz",
+				"Shared 3D Models/Models/chicken.usdz",
+				"Shared 3D Models/Models/cow.usdz",
+				"Shared 3D Models/Models/egg.usdz",
+				"Shared 3D Models/Models/factory.usdz",
+				"Shared 3D Models/Models/farm.usdz",
+				"Shared 3D Models/Models/lawnMower.usdz",
+				"Shared 3D Models/Models/market.usdz",
+				"Shared 3D Models/Models/milk.usdz",
+				"Shared 3D Models/Models/Sickle.usdz",
+				"Shared 3D Models/Models/tree.usdz",
+				"Shared 3D Models/Previews/axe.scn",
+				"Shared 3D Models/Previews/chainsaw.scn",
+				"Shared 3D Models/Previews/chicken.scn",
+				"Shared 3D Models/Previews/cow.scn",
+				"Shared 3D Models/Previews/factory.scn",
+				"Shared 3D Models/Previews/farm.scn",
+				"Shared 3D Models/Previews/market.scn",
 				"Shared Models/ShopItem.swift",
 				"Shared ViewModel/FarmViewModel.swift",
+			);
+			target = 24367EDE2D6DAE9E00BA2527 /* FarmVision */;
+		};
+		24367F062D6DF52100BA2527 /* Exceptions for "Farm" folder in "FarmVision" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Modules/Shop/View/ShopItemView.swift,
+				Modules/Shop/View/ShopView.swift,
+				Resources/Images/Assets.xcassets,
 			);
 			target = 24367EDE2D6DAE9E00BA2527 /* FarmVision */;
 		};
@@ -54,6 +83,9 @@
 		};
 		2489CABB2D5A054E00860D8A /* Farm */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				24367F062D6DF52100BA2527 /* Exceptions for "Farm" folder in "FarmVision" target */,
+			);
 			path = Farm;
 			sourceTree = "<group>";
 		};
@@ -428,6 +460,9 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = mekhak.com.Farm;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -459,6 +494,9 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = mekhak.com.Farm;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
